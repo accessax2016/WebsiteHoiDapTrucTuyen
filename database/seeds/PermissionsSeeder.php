@@ -11,9 +11,11 @@ class PermissionsSeeder extends Seeder
      */
     public function run()
     {
+        $faker = Faker\Factory::create();
+        $date = $faker->dateTimeThisYear();
         DB::table('permissions')->insert([
-        	['user_id'=>rand(1,10), 'name'=>'Thành Viên', 'name_url'=>changeTitle('Thành Viên'), 'key'=>'1', 'created_at' => new DateTime(), 'updated_at' => new DateTime()],
-        	['user_id'=>rand(1,10), 'name'=>'Quản Trị Viên', 'name_url'=>changeTitle('Quản Trị Viên'), 'key'=>'2', 'created_at' => new DateTime(), 'updated_at' => new DateTime()],
-        	]);
+        	['name'=>'Member', 'name_url'=>changeTitle('Member'), 'created_at' => $date, 'updated_at' => $date],
+        	['name'=>'Admin', 'name_url'=>changeTitle('Admin'), 'created_at' => $date, 'updated_at' => $date],
+        ]);
     }
 }

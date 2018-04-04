@@ -41,4 +41,8 @@ class Question extends Model
     //     }
     //     return false;
     // }
+     
+    public function activities() {
+        return $this->morphMany('App\Activity', 'activitable');
+    }
 }

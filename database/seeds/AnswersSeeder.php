@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Question;
 
 class AnswersSeeder extends Seeder
 {
@@ -11,18 +12,33 @@ class AnswersSeeder extends Seeder
      */
     public function run()
     {
-        for($i = 1; $i <= 50; $i++)
+        $faker = Faker\Factory::create();
+        for($i = 1; $i <= 1000; $i++)
         {
+            $date = $faker->dateTimeThisYear;
+            $user_id = rand(1,100);
+            $question_id = rand(1,500);
         	DB::table('answers')->insert(
 	        	[
-	        		'user_id' => rand(1,10),
-	        		'question_id' => rand(1,10),
-	        		'content' => 'Nội Dung Answer '.$i.' là gì',
-                    'best_answer' => false,
-	            	'created_at' => new DateTime(),
-                    'updated_at' => new DateTime()
+	        		'user_id' => $user_id,
+	        		'question_id' => $question_id,
+	        		'content' => $faker->text(300),
+	            	'created_at' => $date,
+                    'updated_at' => $date
 	        	]
         	);
+            $question = Question::find($question_id);
+            DB::table('activities')->insert(
+                [
+                    'user_id' => $user_id,
+                    'user_related_id' => $question->user_id,
+                    'content' => 'đã trả lời',
+                    'activitable_id' => $question->id,
+                    'activitable_type' => 'App\Question',
+                    'created_at' => $date,
+                    'updated_at' => $date
+                ]
+            );
         }
     }
 }

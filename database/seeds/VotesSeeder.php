@@ -11,28 +11,45 @@ class VotesSeeder extends Seeder
      */
     public function run()
     {
+        $faker = Faker\Factory::create();
     	$action = array(
     		'up',
     		'down'
     	);
     	$type = array(
     		'App\Question',
-    		'App\Answer',
-    		'App\Documentation'
+    		'App\Documentation',
+            // 'App\Answer',
     	);
 
-    	for($i=1;$i<=100;$i++)
+    	for($i=1;$i<=5000;$i++)
     	{
+            $date = $faker->dateTimeThisYear;
     		DB::table('votes')->insert(
     			[
-    				'user_id' => rand(1,10),
+    				'user_id' => rand(1,100),
     				'vote_action' => $action[rand(0,1)],
-    				'votable_id' => rand(1,10),
-    				'votable_type' => $type[rand(0,2)],
-    				'created_at' => new DateTime(),
-    				'updated_at' => new DateTime()
+    				'votable_id' => rand(1,500),
+    				'votable_type' => $type[rand(0,1)],
+    				'created_at' => $date,
+    				'updated_at' => $date
     			]
     		);
     	}
+
+        for($i=1;$i<=5000;$i++)
+        {
+            $date = $faker->dateTimeThisYear;
+            DB::table('votes')->insert(
+                [
+                    'user_id' => rand(1,100),
+                    'vote_action' => $action[rand(0,1)],
+                    'votable_id' => rand(1,1000),
+                    'votable_type' => 'App\Answer',
+                    'created_at' => $date,
+                    'updated_at' => $date
+                ]
+            );
+        }
     }
 }

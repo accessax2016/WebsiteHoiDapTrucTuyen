@@ -18,7 +18,7 @@ class CreateTaggablesTable extends Migration
             $table->integer('tag_id');
             $table->integer('taggable_id')->unsigned();
             $table->string('taggable_type');
-            $table->boolean('active')->default(true);
+            // $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

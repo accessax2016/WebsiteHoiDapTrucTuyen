@@ -18,7 +18,7 @@ class CommentList extends JsonResource
         return [
             'id' => $this->id,
             'content' => $this->content,
-            'date_comment' => $this->updated_at,
+            'date_comment' => $this->created_at,
             'user' => new UserOwner($this->user),
         ];
     }

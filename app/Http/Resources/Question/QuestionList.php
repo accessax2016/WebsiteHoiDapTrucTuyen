@@ -3,8 +3,8 @@
 namespace App\Http\Resources\Question;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Tag\TagList;
-use App\Http\Resources\User\UserInteract;
+use App\Http\Resources\Tag\TagTagged;
+use App\Http\Resources\Activity\ActityInteract;
 
 class QuestionList extends JsonResource
 {
@@ -23,27 +23,10 @@ class QuestionList extends JsonResource
             'viewed' => $this->view,
             'answered' => $this->answers->count(),
             'voted' => $this->countVote($this->votes),
-            'tags' => TagList::collection($this->tags),
+            'tags' => TagTagged::collection($this->tags),
             'best_answer' => $this->bestAnswer($this->answers),
-            'user_last_interact' => $this->userLastInteract($this->answers), 
+            'user_last_interact' => new ActityInteract($this->activities->last()), 
         ];
-    }
-
-    public function userLastInteract($answers) {
-        if ($answers->count()) {
-            $answers = $this->answers;
-            $last_answer = $answers->where('updated_at', $answers->max('updated_at'))->last();
-            $resource = $last_answer->user;
-            $resource['interact'] = 'đã trả lời';
-            $resource['date_interact'] = $last_answer->updated_at;
-            return new UserInteract($resource);
-        }
-        else {
-            $resource = $this->user;
-            $resource['interact'] = 'đã hỏi';
-            $resource['date_interact'] = $this->updated_at;
-            return new UserInteract($resource);
-        }
     }
 
     public function bestAnswer($answers) {

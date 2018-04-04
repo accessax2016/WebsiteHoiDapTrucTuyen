@@ -18,10 +18,10 @@ class CreateAnswersTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('question_id')->unsigned();
             $table->text('content');
-            $table->integer('point_rating')->default('0');
+            // $table->integer('point_rating')->default('0');
             $table->boolean('best_answer')->default(false);
             $table->boolean('is_new')->default(true);
-            $table->boolean('active')->default(true);
+            // $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

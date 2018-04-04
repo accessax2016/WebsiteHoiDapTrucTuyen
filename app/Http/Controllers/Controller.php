@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Auth;
+use App\Exceptions\NotOwnerException;
 
 class Controller extends BaseController
 {
@@ -19,5 +21,12 @@ class Controller extends BaseController
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $items = $items instanceof Collection ? $items : Collection::make($items);
         return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
+    }
+
+    public function CheckOwner($object)
+    {
+        if (Auth::id() !== $object->user_id) {
+            throw new NotOwnerException;
+        }
     }
 }

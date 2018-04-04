@@ -19,6 +19,7 @@ use App\Events\PointReputationEvent;
 use App\Events\RemoveReferencesEvent;
 use App\Exceptions\NotOwnerException;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Events\ActivityEvent;
 
 class QuestionController extends Controller
 {
@@ -31,26 +32,26 @@ class QuestionController extends Controller
     {
         switch ($request->sort) {
             case 'view':
-                $questions = Question::where('active', true)->orderByDesc('view')->orderByDesc('updated_at')->paginate(5);
+                $questions = Question::orderByDesc('view')->paginate(10);
                 break;
             case 'answer':
-                $questions = Question::where('questions.active', true)->leftJoin('answers','questions.id','=','answers.question_id')->
+                $questions = Question::leftJoin('answers','questions.id','=','answers.question_id')->
                 selectRaw('questions.*, count(answers.question_id) AS `count`')->
                 groupBy('questions.id')->
-                orderByDesc('count')->orderByDesc('updated_at')->
-                paginate(5);
+                orderByDesc('count')->
+                paginate(10);
                 break;
             case 'vote':
-                $questions = Question::where('active', true)->get();
-                $questions = $questions->sortByDesc('updated_at')->sortByDesc(function($question) {
+                $questions = Question::get();
+                $questions = $questions->sortByDesc(function($question) {
                     $countvotes_up = $question->votes->where('vote_action', 'up')->count();
                     $countvotes_down = $question->votes->where('vote_action', 'down')->count();
                     return $countvotes_up - $countvotes_down;
                 });
-                $questions = $this->paginate($questions, 5, $request->page,['path' => LengthAwarePaginator::resolveCurrentPath()]);
+                $questions = $this->paginate($questions, 10, $request->page,['path' => LengthAwarePaginator::resolveCurrentPath()]);
                 break;
             default:    //newest
-                $questions = Question::where('active', true)->orderByDesc('updated_at')->paginate(5);
+                $questions = Question::orderByDesc('created_at')->paginate(10);
                 break;
         }
     	return QuestionList::collection($questions);
@@ -58,14 +59,14 @@ class QuestionController extends Controller
 
     public function show($id)
     {
-    	return new QuestionDetail(Question::where('active', true)->find($id));
+    	return new QuestionDetail(Question::find($id));
     }
 
     public function informationQuestion()
     {
-    	$count_question = Question::where('active', true)->count();
-    	$count_answer = Answer::where('active', true)->count();
-    	$count_comment = Comment::where('active', true)->where('commentable_type', 'App\Question')->count();
+    	$count_question = Question::count();
+    	$count_answer = Answer::count();
+    	$count_comment = Comment::where('commentable_type', 'App\Question')->count();
         $result = collect([
 
             'questions' => $count_question, 
@@ -75,8 +76,8 @@ class QuestionController extends Controller
         return new QuestionInformation($result);
     }
 
-    public function relatedQuestion($id) {
-        $question = Question::where('active', true)->find($id);
+    public function related($id) {
+        $question = Question::find($id);
         $tags = $question->tags;
         $all_question_related = new Collection;   
         foreach ($tags as $tag) {
@@ -105,6 +106,7 @@ class QuestionController extends Controller
         $question->updated_at = Carbon::now();
         $question->save();
 
+        event(new ActivityEvent($question, 'đã hỏi'));
         event(new TagEvent($question, $request->tags));
         event((new PointReputationEvent(1, 10)));
 
@@ -122,6 +124,7 @@ class QuestionController extends Controller
         $question->content = $request->content;
         $question->save();
 
+        event(new ActivityEvent($question, 'đã chỉnh sửa'));
         event(new TagEvent($question, $request->tags));
 
         return new QuestionDetail(Question::find($question->id));
@@ -133,41 +136,35 @@ class QuestionController extends Controller
 
         $this->CheckOwner($question);
 
+        event(new ActivityEvent($question, 'đã xóa'));
         event(new RemoveReferencesEvent($question));
+        event((new PointReputationEvent(0, 10)));
 
         $question->delete();
 
         return null;
     }
 
-    public function CheckOwner($object)
-    {
-        if (Auth::id() !== $object->user_id) {
-            throw new NotOwnerException;
-        }
-    }
-
     public function search(Request $request)
     {
         $searchByKeyWord = $this->searchByKeyWord($request->keyword);
         $searchByTag = $this->searchByTag($request->tags);
-        $collection = $searchByKeyWord->intersect($searchByTag)->sortByDesc('updated_at')
-        ->sortByDesc(function($question) {
+        $collection = $searchByKeyWord->intersect($searchByTag)->sortByDesc(function($question) {
             $countvotes_up = $question->votes->where('vote_action', 'up')->count();
             $countvotes_down = $question->votes->where('vote_action', 'down')->count();
             return $countvotes_up - $countvotes_down;
         });
-        $questions = $this->paginate($collection, 5, $request->page,['path' => LengthAwarePaginator::resolveCurrentPath()]);
+        $questions = $this->paginate($collection, 10, $request->page,['path' => LengthAwarePaginator::resolveCurrentPath()]);
         return QuestionList::collection($questions);
     }
 
     public function searchByKeyWord($keyword) {
         if ($keyword == null) {
-            return Question::where('active', true)->get();
+            return Question::get();
         }
         else {
             $words = explode(' ', $keyword);
-            $questions = Question::where('active', true)->where(function ($query)use($words) {
+            $questions = Question::where(function ($query)use($words) {
                 foreach($words as $word) {
                     $query->orWhere('title', 'LIKE', '%' . $word . '%');
                 }
@@ -178,10 +175,10 @@ class QuestionController extends Controller
 
     public function searchByTag($tags) {
         if ($tags == null) {
-            return Question::where('active', true)->get();
+            return Question::get();
         }
         else {
-            $questions = Question::where('questions.active', true)->join('taggables', function($join) {
+            $questions = Question::join('taggables', function($join) {
                 $join->on('questions.id', '=', 'taggables.taggable_id')
                 ->where('taggables.taggable_type', '=', 'App\Question');
             })->join('tags', function($join) use ($tags) {

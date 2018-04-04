@@ -11,19 +11,21 @@ class TaggablesSeeder extends Seeder
      */
     public function run()
     {
+        $faker = Faker\Factory::create();
     	$type = array(
     		'App\Question',
     		'App\Documentation'
     		);
-        for($i = 1; $i <= 100; $i++)
+        for($i = 1; $i <= 3000; $i++)
         {
+            $date = $faker->dateTimeThisYear;
         	DB::table('taggables')->insert(
 	        	[
 	        		'tag_id' => rand(1,20),
-	        		'taggable_id' => rand(1,10),
+	        		'taggable_id' => rand(1,500),
 	        		'taggable_type' => $type[rand(0,1)],
-	            	'created_at' => new DateTime(),
-                    'updated_at' => new DateTime()
+	            	'created_at' => $date,
+                    'updated_at' => $date
 	        	]
         	);
         }

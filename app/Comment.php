@@ -17,7 +17,7 @@ class Comment extends Model
         return $this->morphTo();
     }
 
-    public function pings() {
-        return $this->hasMany('App\Ping', 'comment_id', 'id');
+    public function activities() {
+        return $this->morphMany('App\Activity', 'activitable');
     }
 }

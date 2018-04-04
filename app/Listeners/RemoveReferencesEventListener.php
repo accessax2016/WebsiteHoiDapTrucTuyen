@@ -27,25 +27,52 @@ class RemoveReferencesEventListener
     public function handle(RemoveReferencesEvent $event)
     {
         $object = $event->object;
+        switch (get_class($object)) {
+            case 'App\Question':
+                $this->deleteAnswer($object);
+                $this->deleteComments($object);
+                $this->deleteTaggables($object);
+                break;
+            case 'App\Documentation':
+                $this->deleteComments($object);
+                $this->deleteTaggables($object);
+                break;
+            case 'App\Answer':
+                $this->deleteComments($object);
+                break;
+            default:
+                # code...
+                break;
+        }
+    }
+
+    public function deleteTaggables($object)
+    {
         // Delete taggables
         foreach ($object->tags as $taggable) {
             $taggable->pivot->delete();    // Delete old taggables
         }
+    }
+
+    public function deleteComments($object)
+    {
         // Delete comments
         $comments = $object->comments;
         foreach($comments as $cmt){
             $cmt->delete();
         }
-        if (get_class($object) == 'App\Question') {
-            // Delete answers of question
-            $answers = $object->answers;
-            foreach ($answers as $ans) {
-                $comments = $ans->comments;
-                foreach ($comments as $cmt) {
-                    $cmt->delete();  // Delete comments of question
-                }
-                $ans->delete(); // Delete answers of question
+    }
+
+    public function deleteAnswer($object)
+    {
+        // Delete answers of question
+        $answers = $object->answers;
+        foreach ($answers as $ans) {
+            $comments = $ans->comments;
+            foreach ($comments as $cmt) {
+                $cmt->delete();  // Delete comments of question
             }
+            $ans->delete(); // Delete answers of question
         }
     }
 }

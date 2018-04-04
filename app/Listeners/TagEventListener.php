@@ -43,7 +43,6 @@ class TagEventListener
             $taggable->tag_id = $tag;
             $taggable->taggable_id = $event->object->id;
             $taggable->taggable_type = get_class($event->object);
-            $taggable->active = true;
             $taggable->created_at = Carbon::now();
             $taggable->updated_at = Carbon::now();
             $taggable->save();   // Save into database

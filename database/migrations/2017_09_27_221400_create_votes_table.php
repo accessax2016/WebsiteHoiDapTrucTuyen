@@ -19,7 +19,7 @@ class CreateVotesTable extends Migration
             $table->string('vote_action');
             $table->integer('votable_id')->unsigned();
             $table->string('votable_type');
-            $table->boolean('active')->default(true);
+            // $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

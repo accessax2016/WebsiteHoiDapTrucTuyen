@@ -19,6 +19,8 @@ class UserOwner extends JsonResource
             'name' => $this->name,
             'name_url' => $this->name_url,
             'avatar' => $this->avatar,
+            'job' => $this->job,
+            'point' => $this->point_reputation,
         ];
     }
 }

@@ -12,7 +12,7 @@ class Permission extends Model
     	return $this->hasMany('App\User', 'permission_id' ,'id');
     }
 
-    public function user_created() {
-    	return $this->belongsTo('App\User', 'user_id' ,'id');
-    }
+    // public function user_created() {
+    // 	return $this->belongsTo('App\User', 'user_id' ,'id');
+    // }
 }

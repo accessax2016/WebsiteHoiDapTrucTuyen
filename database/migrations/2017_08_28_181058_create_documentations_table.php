@@ -19,12 +19,13 @@ class CreateDocumentationsTable extends Migration
             $table->integer('subject_id')->unsigned();
             $table->string('title');
             $table->string('title_url');
+            $table->string('summary');
             $table->text('content');
             $table->string('link');
-            $table->integer('point_rating')->default('0');
+            // $table->integer('point_rating')->default('0');
             $table->integer('view')->default('0');
             $table->boolean('is_new')->default(true);
-            $table->boolean('active')->default(true);
+            // $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

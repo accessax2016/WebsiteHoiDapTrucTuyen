@@ -22,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\RemoveReferencesEvent' => [
             'App\Listeners\RemoveReferencesEventListener',
         ],
+        'App\Events\ActivityEvent' => [
+            'App\Listeners\ActivityEventListener',
+        ],
     ];
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Resources\Documentation;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Tag\TagList;
+use App\Http\Resources\Activity\ActityInteract;
 
 class DocumentationList extends JsonResource
 {
@@ -19,11 +20,11 @@ class DocumentationList extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'title_url' => $this->title_url,
-            'summary' => $this->title,
+            'summary' => $this->summary,
             'viewed' => $this->view,
             'voted' => $this->countVote($this->votes),
             'tags' => TagList::collection($this->tags),
-            'user_last_interact' => $this->userLastInteract($this->user), 
+            'user_last_interact' => new ActityInteract($this->activities->last()), 
         ];
     }
 
@@ -31,22 +32,5 @@ class DocumentationList extends JsonResource
         $countvotes_up = $votes->where('vote_action', 'up')->count();
         $countvotes_down = $votes->where('vote_action', 'down')->count();
         return $countvotes_up - $countvotes_down;
-    }
-
-    public function userLastInteract($user) {
-        if ($answers->count()) {
-            $answers = $this->answers;
-            $last_answer = $answers->where('updated_at', $answers->max('updated_at'))->last();
-            $resource = $last_answer->user;
-            $resource['interact'] = 'đã trả lời';
-            $resource['date_interact'] = $last_answer->updated_at;
-            return new UserInteract($resource);
-        }
-        else {
-            $resource = $this->user;
-            $resource['interact'] = 'đã hỏi';
-            $resource['date_interact'] = $this->updated_at;
-            return new UserInteract($resource);
-        }
     }
 }

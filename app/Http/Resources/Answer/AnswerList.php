@@ -21,7 +21,7 @@ class AnswerList extends JsonResource
             'content' => $this->content,
             'voted' => $this->countVote($this->votes),
             'best_answer' => $this->best_answer,
-            'date_answer' => $this->updated_at,
+            'date_answer' => $this->created_at,
             'user_owner' => new UserOwner($this->user),
             'comments' => CommentList::collection($this->comments),
         ];

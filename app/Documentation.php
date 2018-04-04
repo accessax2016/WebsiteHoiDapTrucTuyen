@@ -25,8 +25,13 @@ class Documentation extends Model
     {
         return $this->morphMany('App\Vote', 'votable');
     }
+    
     public function subject()
     {
         return $this->belongsTo('App\Subject', 'subject_id','id');
+    }
+
+    public function activities() {
+        return $this->morphMany('App\Activity', 'activitable');
     }
 }

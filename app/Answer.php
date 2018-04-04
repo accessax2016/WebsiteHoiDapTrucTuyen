@@ -25,4 +25,8 @@ class Answer extends Model
     {
         return $this->morphMany('App\Vote', 'votable');
     }
+
+    public function activities() {
+        return $this->morphMany('App\Activity', 'activitable');
+    }
 }

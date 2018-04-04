@@ -19,6 +19,8 @@ class QuestionRelated extends JsonResource
             'title' => $this->title,
             'title_url' => $this->title_url,
             'voted' => $this->countVote($this->votes),
+            'answered' => $this->answers->count() > 0 ? true : false,
+            'best_answer' => $this->answers->where('best_answer', true)->count() > 0 ? true : false,
         ];
     }
 

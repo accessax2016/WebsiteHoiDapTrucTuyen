@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\User;
+namespace App\Http\Resources\Subject;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserInteract extends JsonResource
+class SubjectResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +17,6 @@ class UserInteract extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'name_url' => $this->name_url,
-            'interact' => $this->interact,
-            'date_interact' => $this->date_interact,
         ];
     }
 }

@@ -29,7 +29,7 @@ class CreateUsersTable extends Migration
             $table->boolean('is_new')->default(true);
             $table->boolean('active')->default(true);
             $table->rememberToken();
-            $table->timestamp('last_activity_time')->nullable();;
+            $table->timestamp('last_online_at')->nullable();;
             $table->timestamps();
         });
     }

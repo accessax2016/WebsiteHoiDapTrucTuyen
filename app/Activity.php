@@ -15,4 +15,8 @@ class Activity extends Model
     public function user_related() {
     	return $this->belongsTo('App\User', 'user_related_id' ,'id');
     }
+
+    public function activitable() {
+    	return $this->morphTo();
+    }
 }

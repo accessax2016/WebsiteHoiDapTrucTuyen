@@ -15,12 +15,12 @@ class CreatePermissionsTable extends Migration
     {
         Schema::create('permissions', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
+            // $table->integer('user_id')->unsigned();
             $table->string('name');
             $table->string('name_url');
-            $table->integer('key');
+            // $table->integer('key');
             $table->boolean('is_new')->default(true);
-            $table->boolean('active')->default(true);
+            // $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

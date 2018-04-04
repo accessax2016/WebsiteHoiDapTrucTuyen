@@ -18,10 +18,10 @@ class CreateActivitiesTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('user_related_id')->unsigned();
             $table->text('content');
-            $table->string('link')->nullable();
-            $table->boolean('type')->default(0);    //0: user, 1:admin
+            $table->integer('activitable_id')->unsigned();
+            $table->string('activitable_type');
             $table->boolean('is_new')->default(true);
-            $table->boolean('active')->default(true);
+            // $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }
